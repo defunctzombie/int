@@ -105,7 +105,7 @@ Int.prototype.sub = function(num) {
     // basic subtraction for common size
     var borrow = 0;
     for (var i = lb - 1, j = la - 1; i >= 0, j >= 0 ; --i, --j) {
-        res[i] -= (a[j] - borrow);
+        res[i] -= a[j] + borrow;
         borrow = 0;
 
         if (res[i] < 0) {
