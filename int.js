@@ -14,7 +14,7 @@ var Int = function(num) {
     }
 
     // sign
-    self._s = (num += '').charAt(0) === '-';
+    self._s = ((num += '').charAt(0) === '-') ? 1 : 0;
 
     // remove any leading - or +
     num = num.replace(/[^\d]/g, '');
@@ -27,7 +27,7 @@ var Int = function(num) {
 Int.prototype.add = function(num) {
     var self = this;
 
-    if(self._s !== (num = Int(num))._s) {
+    if(self._s != (num = Int(num))._s) {
         num._s ^= 1;
         return self.sub(num);
     }
@@ -36,17 +36,16 @@ Int.prototype.add = function(num) {
     if (self._d.length < num._d.length) {
         var a = self._d;
         var b = num._d;
+        var out = Int(num);
     }
     else {
         var a = num._d;
         var b = self._d;
+        var out = Int(self);
     }
 
     var la = a.length;
     var lb = b.length;
-
-    // new output number
-    var out = Int(b);
 
     // clone the larger number
     var res = out._d;
@@ -92,34 +91,46 @@ Int.prototype.sub = function(num) {
         return this.add(num);
     }
 
-    var out = Int(self);
-
-    // make a the larger number
-    var c = out.abs().lt(num.abs());
-    var a = c ? out._d : num._d;
-    var b = c ? num._d : out._d;
+    // make a the smaller number
+    var c = self.abs().lt(num.abs());
+    var a = c ? self._d : num._d;
+    var b = c ? num._d : self._d;
 
     var la = a.length;
     var lb = b.length;
 
-    // pad shorter number with 0's
-    la != lb && zeroes(a, lb - la, 1);
+    var out = Int(b);
+    var res = out._d;
 
-    // prep borrow by subtracting away all we need
-    for (var i=lb-1 ; i>0 ; --i) {
-        if (b[i] < 0 || a[i] > b[i]) {
-            b[i] += 10;
-            b[i-1] -= 1;
+    // basic subtraction for common size
+    var borrow = 0;
+    for (var i = lb - 1, j = la - 1; i >= 0, j >= 0 ; --i, --j) {
+        res[i] -= (a[j] - borrow);
+        borrow = 0;
+
+        if (res[i] < 0) {
+            res[i] += 10;
+            borrow = 1;
         }
     }
 
-    // perform actual subtraction
-    for (var i=0 ; i<lb ; ++i) {
-        b[i] -= a[i];
+    // carry the rest of the way
+    for (; i >= 0 ; --i) {
+        res[i] -= borrow;
+        borrow = 0;
+        if (res[i] < 0) {
+            res[i] += 10;
+            borrow = 1;
+        }
+
+        // no carry, rest of the number will be unchanged
+        if (borrow === 0) {
+            break;
+        }
     }
 
+    // flip the sign if sub num was larger
     c && (out._s ^= 1);
-    out._d = b;
     return out;
 };
 
