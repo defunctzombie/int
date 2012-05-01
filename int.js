@@ -194,13 +194,65 @@ Int.prototype.div = function(num) {
         return Int();
     }
 
-    var out = Int(0);
-    var zero = Int(0);
+    var numerator = self._d;
 
-    // TODO (shtylman) changeme from naive implementation
-    while(zero.lt(self)) {
-        out = out.add(1);
-        zero = zero.add(num);
+    var out = Int();
+
+    var rem = Int();
+    while (numerator.length) {
+        var zero = Int();
+
+        // shift numbers off the numerator until we have achieved size
+        // every number after the first causes a 0 to be inserted
+        // numbers shifted in from the remainder should not cause 0 insertion
+
+        var c = 0;
+        while (rem.lt(num) && numerator.length) {
+            if (c++ > 0) {
+                out._d.push(0);
+            }
+
+            // shift a number from numerator to our running num
+            rem._d.push(numerator.shift());
+        }
+
+        while (rem._d.length && rem._d[0] === 0) {
+            rem._d.shift();
+        }
+
+        var count = 0;
+        // figure out how many times num goes into sub
+        while (zero.lte(rem)) {
+            ++count;
+            zero = zero.add(num);
+        }
+
+        if (count - 1 === 0) {
+            out._d.push(0);
+            break;
+        }
+
+        zero = zero.sub(num);
+        while(zero._d.length && zero._d[0] === 0) {
+            zero._d.shift();
+        }
+
+        // set the remainder
+        var rem = rem.sub(zero);
+
+        while(rem._d.length && rem._d[0] === 0) {
+            rem._d.shift();
+        }
+
+        if (rem._d.length === 0) {
+            rem._s = 0;
+        }
+
+        out._d.push(count - 1);
+    }
+
+    while (out._d.length && out._d[0] === 0) {
+        out._d.shift();
     }
 
     return out;
