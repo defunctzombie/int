@@ -32,21 +32,54 @@ Int.prototype.add = function(num) {
         return self.sub(num);
     }
 
-    // new output number
-    var out = Int(self);
+    // a will be the smaller number
+    if (self._d.length < num._d.length) {
+        var a = self._d;
+        var b = num._d;
+    }
+    else {
+        var a = num._d;
+        var b = self._d;
+    }
 
-    var a = out._d;
-    var b = num._d;
     var la = a.length;
     var lb = b.length;
 
-    la != lb && ((lb = la - lb) > 0 ? zeroes(b, lb, 1) : zeroes(a, -lb, 1));
+    // new output number
+    var out = Int(b);
 
-    var i = (la = a.length) == (lb = b.length) ? a.length : ((lb = la - lb) > 0 ? zeroes(b, lb) : zeroes(a, -lb)).length;
+    // clone the larger number
+    var res = out._d;
 
-    for(var r = 0; i; r = (a[--i] = a[i] + b[i] + r) / 10 >>> 0, a[i] %= 10);
+    var carry = 0;
+    for (var i = lb - 1, j = la - 1; i >= 0, j >= 0 ; --i, --j) {
+        res[i] += carry + a[j];
+        carry = 0;
 
-    r && a.unshift(r);
+        if (res[i] >= 10) {
+            res[i] -= 10;
+            carry = 1;
+        }
+    }
+
+    // carry the rest of the way
+    for (; i >= 0 ; --i) {
+        res[i] += carry;
+        carry = 0;
+        if (res[i] >= 10) {
+            res[i] -= 10;
+            carry = 1;
+        }
+
+        // no carry, rest of the number will be unchanged
+        if (carry === 0) {
+            break;
+        }
+    }
+
+    if (carry > 0) {
+        res.unshift(1);
+    }
 
     return out;
 }
