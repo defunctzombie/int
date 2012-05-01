@@ -134,20 +134,54 @@ Int.prototype.sub = function(num) {
     return out;
 };
 
-Int.prototype.mul = function(n) {
-    var o = Int(this);
-    var r = o._d.length >= (n = Int(n))._d.length;
-    var a = (r ? o : n)._d;
-    var b = (r ? n : o)._d;
+Int.prototype.mul = function(num) {
+    var self = this;
+
+    var r = self._d.length >= (num = Int(num))._d.length;
+    var a = (r ? self : num)._d;
+    var b = (r ? num : self)._d;
+
     var la = a.length;
     var lb = b.length;
-    var x = Int(), j, s;
 
-    for(var i = lb; i; r && s.unshift(r), x.set(x.add(Int(s.join(''))))) {
-        for(s = (new Array(lb - --i)).join('0').split(''), r = 0, j = la; j; r += a[--j] * b[i], s.unshift(r % 10), r = (r / 10) >>> 0);
+    var sum = Int();
+    var zeros = [];
+
+    // loop for smaller number
+    for (var i = lb - 1 ; i >= 0 ; --i) {
+        var out = Int();
+
+        // insert proper number of trailing 0s
+        var val = out._d = out._d.concat(zeros);
+
+        // reset carry
+        var carry = 0;
+
+        // top number
+        for (var j = la - 1; j >= 0; --j) {
+            // multiplication result
+            var mul = b[i] * a[j] + carry;
+
+            // this is the single digit we keep
+            var res = mul % 10;
+
+            // carry amount
+            carry = Math.floor(mul / 10);
+
+            // insert the number into our new integer
+            val.unshift(res);
+        }
+
+        // apply any remaining carry
+        if (carry) {
+            val.unshift(carry);
+        }
+
+        sum = sum.add(out);
+        zeros.push(0);
     }
-    o._s = o._s != n._s, o._f = ((r = la + lb - o._f - n._f) >= (j = (o._d = x._d).length) ? zeroes(o._d, r - j + 1, 1).length : j) - r;
-    return o;
+
+    return sum;
 };
 
 Int.prototype.div = function(num) {
