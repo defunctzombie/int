@@ -209,6 +209,10 @@ Int.prototype.div = function(num) {
     var numerator = self._d;
 
     var out = Int();
+    out._s = self._s ^ num._s;
+
+    // normalize num to positive number
+    num._s = 0;
 
     var rem = Int();
     while (numerator.length) {

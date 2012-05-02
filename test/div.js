@@ -3,6 +3,12 @@ var assert = require('assert');
 var int = require('../');
 
 test('div', function() {
+
+    // sign
+    assert.equal(int(-1).div(1)._s, 1);
+    assert.equal(int(-1).div(-1)._s, 0);
+    assert.equal(int(1).div(-1)._s, 1);
+
     assert.equal(int(100).div(2), 50);
 
     assert.equal(int(99).div(3), 33);
