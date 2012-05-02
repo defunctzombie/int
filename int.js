@@ -7,7 +7,8 @@ var Int = function(num) {
 
     var self = this;
 
-    if(num instanceof Int){
+    // copy existing Int object
+    if (num instanceof Int){
         self._s = num._s;
         self._d = num._d.slice();
         return;
@@ -16,16 +17,19 @@ var Int = function(num) {
     // sign
     self._s = ((num += '').charAt(0) === '-') ? 1 : 0;
 
-    // remove any leading - or +
+    // digits
+    self._d = [];
+
+    // remove any leading - or + as well as other invalid characters
     num = num.replace(/[^\d]/g, '');
 
     // _d is the array of single digits making up the number
-    for(var i = (num = self._d = num.split('')).length; i; num[--i] = +num[i]);
-
-    // trim leading 0's
-    while (self._d.length && self._d[0] === 0) {
-        self._d.shift();
+    var ln = num.length;
+    for (var i=0 ; i<ln ; ++i) {
+        self._d.push(+num[i]);
     }
+
+    trim_zeros(self);
 
     // zeros are normalized to positive
     // TODO (shtylman) consider not doing this and only checking in toString?
@@ -37,8 +41,9 @@ var Int = function(num) {
 /// add num and return new integer
 Int.prototype.add = function(num) {
     var self = this;
+    var num = ensure_int(num);
 
-    if(self._s != (num = Int(num))._s) {
+    if(self._s != num._s) {
         num._s ^= 1;
         return self.sub(num);
     }
@@ -87,6 +92,7 @@ Int.prototype.add = function(num) {
         }
     }
 
+    // remaining carry?
     if (carry > 0) {
         res.unshift(1);
     }
@@ -97,20 +103,24 @@ Int.prototype.add = function(num) {
 Int.prototype.sub = function(num) {
     var self = this;
 
-    if(self._s != (num = Int(num))._s) {
+    // some operations are destructive
+    var num = Int(num);
+
+    if(self._s != num._s) {
         num._s ^= 1;
         return this.add(num);
     }
 
     // make a the smaller number
-    var c = self.abs().lt(num.abs());
+    var c = self._d.length < num._d.length;
     var a = c ? self._d : num._d;
     var b = c ? num._d : self._d;
 
     var la = a.length;
     var lb = b.length;
 
-    var out = Int(b);
+    var out = Int((c) ? num : self);
+    out._s = num._s & self._s; // ??
     var res = out._d;
 
     // basic subtraction for common size
@@ -142,6 +152,14 @@ Int.prototype.sub = function(num) {
 
     // flip the sign if sub num was larger
     c && (out._s ^= 1);
+
+    trim_zeros(out);
+
+    // TODO the subtraction should just be smarter
+    if (out._d.length === 0) {
+        out._s = 0;
+    }
+
     return out;
 };
 
@@ -199,79 +217,65 @@ Int.prototype.mul = function(num) {
 Int.prototype.div = function(num) {
     var self = this;
 
-    if((num = Int(num)) == '0') {
+    // copy since we change sign of num
+    var num = Int(num);
+
+    if(num == '0') {
         throw new Error('Division by 0');
     }
-    else if(this == '0') {
+    else if(self == '0') {
         return Int();
     }
 
-    var numerator = self._d;
+    // copy since we do destructive things
+    var numerator = self._d.slice();
 
-    var out = Int();
-    out._s = self._s ^ num._s;
+    var quo = Int();
+    quo._s = self._s ^ num._s;
 
     // normalize num to positive number
     num._s = 0;
 
+    // remainder from previous calculation
     var rem = Int();
-    while (numerator.length) {
-        var zero = Int();
 
+    while (numerator.length) {
+        // long division
         // shift numbers off the numerator until we have achieved size
         // every number after the first causes a 0 to be inserted
         // numbers shifted in from the remainder should not cause 0 insertion
 
         var c = 0;
-        while (rem.lt(num) && numerator.length) {
+        while (numerator.length && rem.lt(num)) {
             if (c++ > 0) {
-                out._d.push(0);
+                quo._d.push(0);
             }
 
             // shift a number from numerator to our running num
             rem._d.push(numerator.shift());
         }
 
-        while (rem._d.length && rem._d[0] === 0) {
-            rem._d.shift();
-        }
-
         var count = 0;
-        // figure out how many times num goes into sub
-        while (zero.lte(rem)) {
-            ++count;
-            zero = zero.add(num);
+        while(rem.gte(num) && ++count) {
+            rem = rem.sub(num);
         }
 
-        if (count - 1 === 0) {
-            out._d.push(0);
+        if (count === 0) {
+            quo._d.push(0);
             break;
         }
 
-        zero = zero.sub(num);
-        while(zero._d.length && zero._d[0] === 0) {
-            zero._d.shift();
-        }
-
-        // set the remainder
-        var rem = rem.sub(zero);
-
-        while(rem._d.length && rem._d[0] === 0) {
-            rem._d.shift();
-        }
-
-        if (rem._d.length === 0) {
-            rem._s = 0;
-        }
-
-        out._d.push(count - 1);
+        quo._d.push(count);
     }
 
-    while (out._d.length && out._d[0] === 0) {
-        out._d.shift();
+    var rem_prime = rem.add(5);
+
+    // add 1 if negative to 'truncate'
+    if (quo._s && (rem_prime._d[0] >= 5 || rem_prime._d.length > rem._d.length)) {
+        quo = quo.sub(1);
     }
 
-    return out;
+    return trim_zeros(quo);
 };
 
 Int.prototype.mod = function(num) {
@@ -295,33 +299,32 @@ Int.prototype.set = function(num) {
 };
 
 /// -1 if self < n, 0 if self == n, 1 if self > n
-Int.prototype.cmp = function(n) {
+Int.prototype.cmp = function(num) {
     var self = this;
-    var b = Int(n);
+    var num = ensure_int(num);
 
-    if (self._s != b._s) {
+    if (self._s != num._s) {
         return self._s ? -1 : 1;
     }
 
-    var la = self._d.length;
-    var lb = b._d.length;
-
     var a = self._d;
-    var b = b._d;
+    var b = num._d;
+
+    var la = a.length;
+    var lb = b.length;
 
     if (la != lb) {
         return ((la > lb) ^ self._s) ? 1 : -1;
     }
 
-    var l = Math.min(la, lb);
-    for (var i = 0; i < l; ++i) {
+    for (var i = 0; i < la; ++i) {
         if (a[i] != b[i]) {
             return ((a[i] > b[i]) ^ self._s) ? 1 : -1;
         }
     }
 
-    var r = [-1, 1];
-    return la != lb ? r[(la > lb) ^ self._s] : 0;
+    // no differences
+    return 0;
 };
 
 Int.prototype.neg = function() {
@@ -338,7 +341,7 @@ Int.prototype.abs = function() {
 
 Int.prototype.valueOf = Int.prototype.toString = function(){
     var self = this;
-    return (self._s ? '-' : '') + ((self._d.length) ? self._d.join('') : '0');
+    return (self._s && self._d.length ? '-' : '') + ((self._d.length) ? self._d.join('') : '0');
 };
 
 Int.prototype.gt = function (num) {
@@ -367,11 +370,22 @@ Int.prototype.lte = function (num) {
 
 /// private api
 
-function zeroes(n, l, t) {
-    var s = ['push', 'unshift'][t || 0];
-    for(++l; --l; n[s](0));
-    return n;
-};
+function ensure_int(val) {
+    if (val instanceof Int) {
+        return val;
+    }
+
+    return Int(val);
+}
+
+/// remove leading 0's from the int
+function trim_zeros(int) {
+    while (int._d.length && int._d[0] === 0) {
+        int._d.shift();
+    }
+
+    return int;
+}
 
 module.exports = Int;
 

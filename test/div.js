@@ -2,12 +2,21 @@
 var assert = require('assert');
 var int = require('../');
 
-test('div', function() {
-
-    // sign
+test('div#sign', function() {
+    assert.equal(int(1).div(1)._s, 0);
     assert.equal(int(-1).div(1)._s, 1);
     assert.equal(int(-1).div(-1)._s, 0);
     assert.equal(int(1).div(-1)._s, 1);
+});
+
+test('div', function() {
+    // truncation
+    assert.equal(int('123999').div(100), '1239');
+    assert.equal(int('-123999').div(100), '-1240');
+    assert.equal(int('-123949').div(100), '-1240');
+    assert.equal(int('-123450').div(100), '-1235');
+    assert.equal(int('-123449').div(100), '-1235');
+    assert.equal(int('-123495').div(1000), '-124');
 
     assert.equal(int(100).div(2), 50);
 
