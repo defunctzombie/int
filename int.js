@@ -181,6 +181,7 @@ Int.prototype.mul = function(num) {
         zeros.push(0);
     }
 
+    sum._s = self._s ^ num._s;
     return sum;
 };
 

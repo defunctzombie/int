@@ -13,6 +13,11 @@ test('mul', function() {
     assert.equal(int(1234).mul(1234), '1522756');
     assert.equal(int('1234567890').mul('1234567890'), '1524157875019052100');
 
+    // sign
+    assert.equal(int(-1).mul(1)._s, 1);
+    assert.equal(int(-1).mul(-1)._s, 0);
+    assert.equal(int(1).mul(-1)._s, 1);
+
     var n1 = int(1);
     for (var i = 0; i<10 ; ++i, n1=n1.mul(2));
     assert.equal(n1, '1024');
