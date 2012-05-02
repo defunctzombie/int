@@ -32,7 +32,7 @@ Besides the **int** function, all of the other methods operate on the objects re
 ### int (value) ###
 > construct a new aribtrary precision integer
 
-> valid values are intergers, or strings, anything after a decimal point will be discarded
+> valid values are native numbers, strings, or int objects. Anything after a decimal point will be discarded
 
 ### add (value) ###
 > add {value} to our number and return a new int
@@ -51,3 +51,32 @@ Besides the **int** function, all of the other methods operate on the objects re
 
 ### mod (value) ###
 > mod our int by {value} and return the new int
+
+### neg ###
+> return a new int that is the negative
+
+### abs ###
+> return a new int that is the absolute value
+
+### cmp (value) ###
+> compare our value to {value}
+
+> return 0 if self and value are equal, -1 if self < value, 1 if self > value
+
+### lt (value) ###
+> return true if self < value
+
+### lte (value) ###
+> return true if self <= value
+
+### gt (value) ###
+> return true if self > value
+
+### gte (value) ###
+> return true if self >= value
+
+### eq (value) ###
+> return true if self == value
+
+### ne (value) ###
+> return true if self != value
