@@ -19,8 +19,19 @@ var Int = function(num) {
     // remove any leading - or +
     num = num.replace(/[^\d]/g, '');
 
-    // _d is the array of numbers
+    // _d is the array of single digits making up the number
     for(var i = (num = self._d = num.split('')).length; i; num[--i] = +num[i]);
+
+    // trim leading 0's
+    while (self._d.length && self._d[0] === 0) {
+        self._d.shift();
+    }
+
+    // zeros are normalized to positive
+    // TODO (shtylman) consider not doing this and only checking in toString?
+    if (self._d.length === 0) {
+        self._s = 0;
+    }
 };
 
 /// add num and return new integer
@@ -323,7 +334,7 @@ Int.prototype.abs = function() {
 
 Int.prototype.valueOf = Int.prototype.toString = function(){
     var self = this;
-    return (self._s ? '-' : '') + self._d.join('');
+    return (self._s ? '-' : '') + ((self._d.length) ? self._d.join('') : '0');
 };
 
 Int.prototype.gt = function (num) {
