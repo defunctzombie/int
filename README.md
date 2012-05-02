@@ -48,3 +48,6 @@ Besides the **int** function, all of the other methods operate on the objects re
 
 ### pow (value) ###
 > raise our int by {value} and return a new int
+
+### mod (value) ###
+> mod our int by {value} and return the new int
