@@ -16,5 +16,8 @@
   "license" : "MIT",
   "engines": {
     "node": "*"
+  },
+  "scripts": {
+    "test": "mocha"
   }
 }
