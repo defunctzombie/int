@@ -10,6 +10,15 @@ test('div#sign', function() {
 });
 
 test('div', function() {
+    // validate
+    for (var i=0 ; i<1000 ; ++i) {
+        for (var j=1 ; j<10 ; ++j) {
+            assert.equal(int(i).div(j), Math.floor(i/j) + '');
+            assert.equal(int(-i).div(j), Math.floor(-i/j) + '');
+            assert.equal(int(-i).div(-j), Math.floor(-i/-j) + '');
+        }
+    }
+
     // truncation
     assert.equal(int('123999').div(100), '1239');
     assert.equal(int('-123999').div(100), '-1240');
@@ -42,4 +51,8 @@ test('div', function() {
     assert.equal(int(6609).div(76), 86);
 
     assert.equal(int(6609).div(811), 8);
+
+    // test with a set of zeros in the middle
+    assert.equal(int('624009').div('16').toString(), '39000');
+    assert.equal(int('862400965').div(16).toString(), '53900060');
 });

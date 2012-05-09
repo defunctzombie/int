@@ -111,10 +111,20 @@ Int.prototype.sub = function(num) {
         return this.add(num);
     }
 
-    // make a the smaller number
-    var c = self._d.length < num._d.length;
+    var s1 = self._s;
+    var s2 = num._s;
+
+    // make numbers positive for determining the greater one
+    // in absolute terms
+    self._s = num._s = 0;
+
+    // make a the smaller number (abs value)
+    var c = self.lt(num);
     var a = c ? self._d : num._d;
     var b = c ? num._d : self._d;
+
+    self._s = s1;
+    num._s = s2;
 
     var la = a.length;
     var lb = b.length;
@@ -253,6 +263,9 @@ Int.prototype.div = function(num) {
 
             // shift a number from numerator to our running num
             rem._d.push(numerator.shift());
+
+            // important to trim here since 009 - N won't be done right otherwise
+            trim_zeros(rem);
         }
 
         var count = 0;
@@ -268,10 +281,13 @@ Int.prototype.div = function(num) {
         quo._d.push(count);
     }
 
-    var rem_prime = rem.add(5);
+    var rlen = rem._d.length;
 
-    // add 1 if negative to 'truncate'
-    if (quo._s && (rem_prime._d[0] >= 5 || rem_prime._d.length > rem._d.length)) {
+    if (rlen > 1 || (quo._s && rlen > 0)) {
+        rem = rem.add(5);
+    }
+
+    if (quo._s && (rlen !== rem._d.length || rem._d[0] >= 5)) {
         quo = quo.sub(1);
     }
 

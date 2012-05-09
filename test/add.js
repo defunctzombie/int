@@ -19,19 +19,22 @@ test('add#sign', function() {
 
 test('add', function() {
 
-    var n1 = int(0);
-
-    assert.equal(n1.add(int(1)), '1');
-    assert.equal(n1.add(1), '1');
-    assert.equal(n1.add('1'), '1');
-
-    assert.equal(int(99).add(99), '198');
-
-    assert.equal(int(-1235).add(1), '-1234');
-
-    assert.equal(int(100).add(9), 109);
+    // different ways to add
+    assert.equal(int().add(int(1)), '1');
+    assert.equal(int().add(1), '1');
+    assert.equal(int().add('1'), '1');
 
     assert.equal(int(123456789).add(1), 123456790);
     assert.equal(int('123456789012345678901234567890123456789').add(1), '123456789012345678901234567890123456790');
+
+    // validate
+    for (var i=0 ; i<1000 ; ++i) {
+        for (var j=0 ; j<10 ; ++j) {
+            assert.equal(int(i).add(j), i + j + '');
+            assert.equal(int(-i).add(j), -i + j + '');
+            assert.equal(int(i).add(-j), i + - j + '');
+            assert.equal(int(-i).add(-j), -i + - j + '');
+        }
+    }
 });
 
