@@ -355,9 +355,31 @@ Int.prototype.abs = function() {
     return out;
 };
 
-Int.prototype.valueOf = Int.prototype.toString = function(){
+// alphabet for converting to a specific base
+var alphabet = '0123456789abcdefghijklmnopqrstuvwxyz';
+
+Int.prototype.valueOf = Int.prototype.toString = function(base){
     var self = this;
-    return (self._s && self._d.length ? '-' : '') + ((self._d.length) ? self._d.join('') : '0');
+
+    if (!base || base === 10) {
+        return (self._s && self._d.length ? '-' : '') + ((self._d.length) ? self._d.join('') : '0');
+    }
+
+    if (base > 36) {
+        throw new RangeError('base must be > 0 and <= 36');
+    }
+
+    var num = self;
+    var out = [];
+    var div;
+    while (num.gt(0)) {
+        var div = num.div(base);
+        var pos = num.sub(div.mul(base)).toString() - 0;
+        out.push(alphabet[pos]);
+        num = div;
+    }
+
+    return out.reverse().join('');
 };
 
 Int.prototype.gt = function (num) {
