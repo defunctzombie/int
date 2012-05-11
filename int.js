@@ -358,28 +358,37 @@ Int.prototype.abs = function() {
 // alphabet for converting to a specific base
 var alphabet = '0123456789abcdefghijklmnopqrstuvwxyz';
 
-Int.prototype.valueOf = Int.prototype.toString = function(base){
+Int.prototype.valueOf = Int.prototype.toString = function(radix){
     var self = this;
 
-    if (!base || base === 10) {
+    if (!radix || radix === 10) {
         return (self._s && self._d.length ? '-' : '') + ((self._d.length) ? self._d.join('') : '0');
     }
 
-    if (base > 36) {
-        throw new RangeError('base must be > 0 and <= 36');
+    if (radix < 2 || radix > 36) {
+        throw RangeError('radix out of range: ' + radix);
     }
 
-    var num = self;
-    var out = [];
-    var div;
-    while (num.gt(0)) {
-        var div = num.div(base);
-        var pos = num.sub(div.mul(base)).toString() - 0;
-        out.push(alphabet[pos]);
-        num = div;
-    }
+    var radix_pow = Math.pow(radix, 6);
 
-    return out.reverse().join('');
+    var rem = self;
+    var result = '';
+    while (true) {
+        var div = rem.div(radix_pow);
+        var int = rem.sub(div.mul(radix_pow));
+        var digits = (+int.toString()).toString(radix);
+        rem = div;
+
+        if (rem.eq(0)) {
+            return digits + result;
+        }
+        else {
+            while (digits.length < 6) {
+                digits = '0' + digits;
+            }
+            result = '' + digits + result;
+        }
+    }
 };
 
 Int.prototype.gt = function (num) {
