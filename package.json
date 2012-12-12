@@ -25,7 +25,7 @@
       "ie8", "ie9",
       "firefox/15", "chrome/22", "safari/5.1"
     ],
-    "harness" : "mocha",
+    "harness" : "mocha-tdd",
     "files": "test/*.js"
   }
 }
