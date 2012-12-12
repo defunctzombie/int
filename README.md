@@ -83,4 +83,4 @@ Besides the **int** function, all of the other methods operate on the objects re
 
 ## browser support
 
-[![browser support](http://ci.testling.com/shtylman/node-int.png)](http://ci.testling.com/node-int/node-int)
+[![browser support](http://ci.testling.com/shtylman/node-int.png)](http://ci.testling.com/shtylman/node-int)
