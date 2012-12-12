@@ -19,5 +19,13 @@
   },
   "scripts": {
     "test": "mocha"
+  },
+  "testling": {
+    "browsers": [
+      "ie8", "ie9",
+      "firefox/latest", "chrome/latest", "safari/latest"
+    ],
+    "harness" : "mocha",
+    "files": "test/*.js"
   }
 }
