@@ -23,7 +23,7 @@
   "testling": {
     "browsers": [
       "ie8", "ie9",
-      "firefox/latest", "chrome/latest", "safari/latest"
+      "firefox/15", "chrome/22", "safari/5.1"
     ],
     "harness" : "mocha",
     "files": "test/*.js"
