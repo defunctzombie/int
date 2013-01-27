@@ -7,16 +7,16 @@
     "type": "git",
     "url": "git://github.com/shtylman/node-int.git"
   },
+  "keywords": [
+    "int",
+    "integer",
+    "arbitrary"
+  ],
   "main": "int.js",
-  "dependencies": {},
   "devDependencies": {
-    "mocha": ">=1.x.x"
+    "mocha": "~1.8.0"
   },
-  "optionalDependencies": {},
   "license" : "MIT",
-  "engines": {
-    "node": "*"
-  },
   "scripts": {
     "test": "mocha"
   },
