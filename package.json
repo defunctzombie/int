@@ -2,7 +2,7 @@
   "author": "Roman Shtylman <shtylman@gmail.com>",
   "name": "int",
   "description": "arbitrary precision integer and library in pure javascript",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "repository": {
     "type": "git",
     "url": "git://github.com/shtylman/node-int.git"
@@ -16,16 +16,19 @@
   "devDependencies": {
     "mocha": "~1.8.0"
   },
-  "license" : "MIT",
+  "license": "MIT",
   "scripts": {
     "test": "mocha"
   },
   "testling": {
     "browsers": [
-      "ie8", "ie9",
-      "firefox/15", "chrome/22", "safari/5.1"
+      "ie8",
+      "ie9",
+      "firefox/15",
+      "chrome/22",
+      "safari/5.1"
     ],
-    "harness" : "mocha-tdd",
+    "harness": "mocha-tdd",
     "files": "test/*.js"
   }
 }
