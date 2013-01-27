@@ -38,3 +38,17 @@ test('add', function() {
     }
 });
 
+// test that add does not perturb argument
+test('add#constness', function() {
+    var one = int(1);
+    var none = int(-1);
+
+    one.add(none);
+    assert.equal(one, '1');
+    assert.equal(none, '-1');
+
+    none.add(one);
+    assert.equal(one, '1');
+    assert.equal(none, '-1');
+});
+

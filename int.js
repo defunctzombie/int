@@ -45,7 +45,9 @@ Int.prototype.add = function(num) {
 
     if(self._s != num._s) {
         num._s ^= 1;
-        return self.sub(num);
+        var res = self.sub(num);
+        num._s ^= 1;
+        return res;
     }
 
     // a will be the smaller number
@@ -108,7 +110,9 @@ Int.prototype.sub = function(num) {
 
     if(self._s != num._s) {
         num._s ^= 1;
-        return this.add(num);
+        var res = this.add(num);
+        num._s ^= 1;
+        return res;
     }
 
     var s1 = self._s;
@@ -123,6 +127,7 @@ Int.prototype.sub = function(num) {
     var a = c ? self._d : num._d;
     var b = c ? num._d : self._d;
 
+    // restore original signs
     self._s = s1;
     num._s = s2;
 
@@ -244,6 +249,7 @@ Int.prototype.div = function(num) {
     quo._s = self._s ^ num._s;
 
     // normalize num to positive number
+    var orig_s = num._s;
     num._s = 0;
 
     // remainder from previous calculation
@@ -290,6 +296,9 @@ Int.prototype.div = function(num) {
     if (quo._s && (rlen !== rem._d.length || rem._d[0] >= 5)) {
         quo = quo.sub(1);
     }
+
+    // put back the sign of num
+    num._s = orig_s;
 
     return trim_zeros(quo);
 };
