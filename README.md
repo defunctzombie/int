@@ -1,4 +1,4 @@
-[![Build Status](https://secure.travis-ci.org/shtylman/node-int.png)](http://travis-ci.org/shtylman/node-int)
+[![Build Status](https://secure.travis-ci.org/defunctzombie/node-int.png)](http://travis-ci.org/defunctzombie/node-int)
 
 ### Don't let javascript numbers hold you back. Let your true large numbers shine!! ###
 
@@ -83,4 +83,4 @@ Besides the **int** function, all of the other methods operate on the objects re
 
 ## browser support
 
-[![browser support](https://ci.testling.com/shtylman/node-int.png)](https://ci.testling.com/shtylman/node-int)
+[![browser support](https://ci.testling.com/defunctzombie/node-int.png)](https://ci.testling.com/defunctzombie/node-int)
