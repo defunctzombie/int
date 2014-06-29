@@ -1,8 +1,6 @@
-[![Build Status](https://secure.travis-ci.org/defunctzombie/node-int.png)](http://travis-ci.org/defunctzombie/node-int)
+[![Build Status](https://secure.travis-ci.org/defunctzombie/int.svg)](http://travis-ci.org/defunctzombie/int)
 
-### Don't let javascript numbers hold you back. Let your true large numbers shine!! ###
-
-**int** is an arbitrary size integer library written in pure javascript. Why? Because I can and because you need it.
+**int** is an arbitrary size integer library written in javascript for node.js and browsers.
 
 ## quick and dirty ##
 
@@ -15,14 +13,12 @@ var int = require('int');
 
 var large = int('1234567890').mul('1234567890');
 
-// did it work?
 console.log(large.toString());
-//'1524157875019052100' hell yea
+//'1524157875019052100'
 
 // other cool stuff
 var add_me = int('123456').add('-123456');
 var power_up = int(2).pow(10);
-
 ```
 
 ## api ##
@@ -80,7 +76,3 @@ Besides the **int** function, all of the other methods operate on the objects re
 
 ### ne (value) ###
 > return true if self != value
-
-## browser support
-
-[![browser support](https://ci.testling.com/defunctzombie/node-int.png)](https://ci.testling.com/defunctzombie/node-int)
