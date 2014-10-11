@@ -1,5 +1,8 @@
 
-var Int = function(num) {
+var Int = function(num, radix) {
+    if (radix === undefined) {
+        radix = 10;
+    }
     // can be called as a function
     if (!(this instanceof Int)) {
         return new Int(num);
@@ -21,21 +24,46 @@ var Int = function(num) {
     self._d = [];
 
     // remove any leading - or + as well as other invalid characters
-    num = num.replace(/[^\d]/g, '');
+    if (radix === 10) {
+        num = num.replace(/[^\d]/g, '');
+    }
 
     // _d is the array of single digits making up the number
     var ln = num.length;
     for (var i=0 ; i<ln ; ++i) {
-        self._d.push(+num[i]);
+        self._d.push(parseInt(num[i], radix));
     }
 
     trim_zeros(self);
+    if (radix !== 10) {
+        self._d = Int._convertRadix(self._d, radix);
+    }
 
     // zeros are normalized to positive
     // TODO (shtylman) consider not doing this and only checking in toString?
     if (self._d.length === 0) {
         self._s = 0;
     }
+};
+
+Int._convertRadix = function (magnitude, radix) {
+    var result = [];
+    var i = -1;
+    while (++i < magnitude.length) {
+        var j = result.length;
+        var c = magnitude[i];
+        while (--j >= 0) {
+            var t = c + result[j] * radix;
+            c = Math.floor(t / 10);
+            result[j] = t - c * 10;
+        }
+        while (c !== 0) {
+            var t = c;
+            c = Math.floor(t / 10);
+            result.unshift(t - c * 10);
+        }
+    }
+    return result;
 };
 
 /// add num and return new integer
