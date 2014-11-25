@@ -14,14 +14,26 @@ var Int = function(num) {
         return;
     }
 
+    // default value 0
+    num = num || 0;
+
     // sign
     self._s = ((num += '').charAt(0) === '-') ? 1 : 0;
 
     // digits
     self._d = [];
 
+    num = num.replace(/^[+-]/, '');
+    var orig = num;
+
     // remove any leading - or + as well as other invalid characters
     num = num.replace(/[^\d]/g, '');
+
+    // detect if value is not a number
+    if (orig !== num) {
+        self._nan = true;
+        return;
+    }
 
     // _d is the array of single digits making up the number
     var ln = num.length;
@@ -369,6 +381,10 @@ var alphabet = '0123456789abcdefghijklmnopqrstuvwxyz';
 
 Int.prototype.valueOf = Int.prototype.toString = function(radix){
     var self = this;
+
+    if (self._nan) {
+        return NaN;
+    }
 
     if (!radix || radix === 10) {
         return (self._s && self._d.length ? '-' : '') + ((self._d.length) ? self._d.join('') : '0');
