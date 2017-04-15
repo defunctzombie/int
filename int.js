@@ -379,7 +379,11 @@ Int.prototype.abs = function() {
 // alphabet for converting to a specific base
 var alphabet = '0123456789abcdefghijklmnopqrstuvwxyz';
 
-Int.prototype.valueOf = Int.prototype.toString = function(radix){
+Int.prototype.valueOf = function() {
+    return parseFloat(this.toString());
+}
+
+Int.prototype.toString = function (radix) {
     var self = this;
 
     if (self._nan) {
