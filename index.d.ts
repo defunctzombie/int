@@ -32,10 +32,10 @@ declare namespace int {
     mod(value: number | string | Int): Int;
 
     // return a new int that is the negative
-    neg(value: number | string | Int): Int;
+    neg(): Int;
 
     // return a new int that is the absolute value
-    abs(value: number | string | Int): Int;
+    abs(): Int;
 
     // compare our value to {value}. Return:
     //    0 if self and value are equal
